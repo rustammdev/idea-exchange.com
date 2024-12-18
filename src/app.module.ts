@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
-import { IdeaModule } from './idea/idea.module';
+import { IdeasModule } from './idea/idea.module';
 import { MongooseModule } from '@nestjs/mongoose';
+import { CommentsModule } from './comments/comments.module';
 import 'dotenv/config';
 
 @Module({
-  imports: [IdeaModule, MongooseModule.forRoot(process.env.MONGO_URL)],
+  imports: [IdeasModule, MongooseModule.forRoot(process.env.MONGO_URL), CommentsModule],
   controllers: [],
   providers: [],
 })

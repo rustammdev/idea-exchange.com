@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import mongoose, { HydratedDocument } from 'mongoose';
 
 export type IdeaDocument = HydratedDocument<Idea>;
 
@@ -11,11 +11,16 @@ export class Idea {
   @Prop({ required: true, type: String })
   idea: String;
 
-  @Prop({ type: Number, default: 0 })
-  voted: number;
-
-  @Prop({ type: Number, default: 0 })
-  unvoted: number;
+  @Prop({
+    type: [
+      {
+        userIp: mongoose.Types.ObjectId,
+        value: { type: Number, enum: [0, 1] },
+      },
+    ],
+    default: [],
+  })
+  votes: { userIp: String; value: 0 | 1 }[];
 }
 
 export const IdeaSchema = SchemaFactory.createForClass(Idea);
