@@ -1,8 +1,10 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { CommentsController } from './comments.controller';
 import { CommentsService } from './comments.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Comments, CommentsSchema } from './schema/comments.schema';
+import { VoteService } from './vote.service';
+import { IpMiddleware } from 'src/idea/middleware/ip.middleware';
 
 @Module({
   imports: [
@@ -11,6 +13,10 @@ import { Comments, CommentsSchema } from './schema/comments.schema';
     ]),
   ],
   controllers: [CommentsController],
-  providers: [CommentsService],
+  providers: [CommentsService, VoteService],
 })
-export class CommentsModule {}
+export class CommentsModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(IpMiddleware).forRoutes(CommentsController);
+  }
+}

@@ -5,21 +5,24 @@ import { Request, Response, NextFunction } from 'express';
 export class IpMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
     // IP manzilini olish
-    const userIp =
-      req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-
-    // Agar userIp massiv bo'lsa, faqat birinchi IP manzilini tanlab olish
-    let ip: string;
-    if (Array.isArray(userIp)) {
-      ip = userIp[0]; // Agar `x-forwarded-for` bir nechta IP manzillarini qaytarsa, birinchi manzilni olamiz
-    } else {
-      ip = userIp as string; // Agar `userIp` bitta IP manzili bo'lsa, uni string sifatida olish
+    let userIp =
+      (req.headers['x-forwarded-for'] as string) ||
+      req.socket.remoteAddress ||
+      null;
+    console.log('ip' + userIp);
+    // Agar x-forwarded-for header comma bilan ajratilgan bo'lsa
+    if (typeof userIp === 'string' && userIp.includes(',')) {
+      userIp = userIp.split(',')[0].trim();
     }
 
-    // IP manzilini saqlash (misol uchun req obyektiga qo'shamiz)
-    req['userIp'] = ip;
+    // IPv6 formatini IPv4 ga o'tkazish
+    if (userIp === '::1') {
+      userIp = '127.0.0.1';
+    }
 
-    // Keyingi middleware'ga o'tish
+    // IP ni request obyektiga custom property sifatida qo'shish
+    (req as any).clientIp = userIp;
+
     next();
   }
 }
