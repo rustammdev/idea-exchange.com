@@ -6,6 +6,9 @@ export type CommentsDocument = HydratedDocument<Comments>;
 
 @Schema({ timestamps: true })
 export class Comments {
+  @Prop({ required: true, type: String })
+  owner: string;
+
   @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'Idea' })
   ideaId: Idea;
 

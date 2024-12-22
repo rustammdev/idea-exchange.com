@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Req,
+} from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { CreateCommentsDto } from './dto';
 import { VoteService } from './vote.service';
@@ -12,7 +20,6 @@ export class CommentsController {
 
   @Get(':id')
   async getComments(@Param('id') id: string) {
-    console.log(id);
     return this.commentsService.get(id);
   }
 
@@ -36,5 +43,11 @@ export class CommentsController {
   async unlikeIdea(@Param('id') id: string, @Req() req: Request) {
     const userIp = req['clientIp'];
     return await this.voteService.unvote(userIp, id);
+  }
+
+  @Delete(':id')
+  async deleteComment(@Param('id') id: string, @Req() req: Request) {
+    const userIp = req['clientIp'];
+    return await this.commentsService.del(id, userIp);
   }
 }

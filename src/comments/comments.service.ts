@@ -42,4 +42,16 @@ export class CommentsService {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+  // Del comments
+  async del(commentId: string, userIp: string) {
+    const comment = await this.commentsModel
+      .findById({ _id: commentId })
+      .select('owner');
+
+    if (comment.owner != userIp)
+      throw new HttpException('No permission to delete the resource.', 403);
+
+    return await this.commentsModel.findByIdAndDelete({ id: commentId });
+  }
 }

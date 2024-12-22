@@ -9,7 +9,6 @@ export class IpMiddleware implements NestMiddleware {
       (req.headers['x-forwarded-for'] as string) ||
       req.socket.remoteAddress ||
       null;
-    console.log('ip' + userIp);
     // Agar x-forwarded-for header comma bilan ajratilgan bo'lsa
     if (typeof userIp === 'string' && userIp.includes(',')) {
       userIp = userIp.split(',')[0].trim();
