@@ -8,10 +8,10 @@ import { Model } from 'mongoose';
 export class IdeaService {
   constructor(@InjectModel(Idea.name) private ideaModel: Model<Idea>) {}
 
-  //   Cerate idea
-  async create(createIdeaBody: CreateIdeaDto): Promise<Idea> {
+  // Cerate idea
+  async create(createIdeaBody: CreateIdeaDto, userIp: string): Promise<Idea> {
     try {
-      return this.ideaModel.create(createIdeaBody);
+      return this.ideaModel.create({ owner: userIp, ...createIdeaBody });
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -23,8 +23,20 @@ export class IdeaService {
     return this.ideaModel.find().skip(skip).limit(limit).exec();
   }
 
-  // Get Idea
+  // Get unique Idea
   async getIdea(id: string): Promise<Object> {
     return this.ideaModel.findById({ _id: id });
+  }
+
+  // Del comments
+  async del(ideaId: string, userIp: string) {
+    const comment = await this.ideaModel
+      .findById({ _id: ideaId })
+      .select('owner');
+
+    if (comment.owner != userIp)
+      throw new HttpException('No permission to delete the resource.', 403);
+
+    return await this.ideaModel.findByIdAndDelete({ id: ideaId });
   }
 }

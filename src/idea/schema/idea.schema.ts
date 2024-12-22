@@ -5,8 +5,8 @@ export type IdeaDocument = HydratedDocument<Idea>;
 
 @Schema({ timestamps: true })
 export class Idea {
-  // @Prop({ required: true, type: String })
-  // owner : string;
+  @Prop({ required: true, type: String })
+  owner: string;
 
   @Prop({ required: true, type: String })
   title: String;

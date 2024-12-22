@@ -13,7 +13,9 @@ export class CommentsService {
 
   // Get comments
   async get(id: string) {
-    const comments = await this.commentsModel.find({ ideaId: id });
+    const comments = await this.commentsModel
+      .find({ ideaId: id })
+      .populate('ideaId');
 
     if (!comments)
       throw new HttpException(
@@ -24,7 +26,12 @@ export class CommentsService {
   }
 
   // Comment qoshish
-  async add(ideaId: string, data: string, name?: string): Promise<Object> {
+  async add(
+    ideaId: string,
+    data: string,
+    userIp: string,
+    name: string,
+  ): Promise<Object> {
     // ideani mavjudlikka tekshirish
     const isExist = await this.IdeaModel.findById({ _id: ideaId });
     if (!isExist) {
@@ -32,6 +39,7 @@ export class CommentsService {
     }
     try {
       const userComment: CommentsDocument = await this.commentsModel.create({
+        owner: userIp,
         ideaId,
         comment: data,
         name,

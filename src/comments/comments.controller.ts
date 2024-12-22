@@ -24,11 +24,15 @@ export class CommentsController {
   }
 
   @Post(':id')
-  addComments(@Param('id') id: string, @Body() bodyData: CreateCommentsDto) {
+  addComments(
+    @Param('id') id: string,
+    @Body() bodyData: CreateCommentsDto,
+    @Req() req: Request,
+  ) {
     const { comment } = bodyData;
     const name: string = bodyData.name ?? 'no-name';
-
-    return this.commentsService.add(id, comment, name);
+    const userIp = req['clientIp'];
+    return this.commentsService.add(id, comment, userIp, name);
   }
 
   // Mavjud javobga vote berish

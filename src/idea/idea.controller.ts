@@ -5,6 +5,7 @@ import {
   Param,
   Post,
   Query,
+  Req,
   ValidationPipe,
 } from '@nestjs/common';
 import { CreateIdeaDto } from './dto/idea.dto';
@@ -16,18 +17,17 @@ export class IdeaController {
 
   // Savol qoshish
   @Post()
-  async createidea(@Body(new ValidationPipe()) ideaData: CreateIdeaDto) {
-    return this.ideaServise.create(ideaData);
+  async createidea(
+    @Body(new ValidationPipe()) ideaData: CreateIdeaDto,
+    @Req() req: Request,
+  ) {
+    const userIp = req['clientIp'];
+    return this.ideaServise.create(ideaData, userIp);
   }
 
   // Barcha savollarni sarlavhasini olish
   @Get()
   async getIdeas(@Query('page') page = 1, @Query('limit') limit = 10) {
     return this.ideaServise.findAll(page, limit);
-  }
-
-  @Get(':id')
-  async getIdea(@Param('id') id: string) {
-    return this.ideaServise.getIdea(id);
   }
 }
