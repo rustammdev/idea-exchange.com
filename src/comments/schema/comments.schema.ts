@@ -1,12 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
+import { Idea } from 'src/idea/schema/idea.schema';
 
 export type CommentsDocument = HydratedDocument<Comments>;
 
 @Schema({ timestamps: true })
 export class Comments {
-  @Prop({ required: true, type: mongoose.Types.ObjectId })
-  ideaId: string;
+  @Prop({ required: true, type: mongoose.Schema.Types.ObjectId, ref: 'Idea' })
+  ideaId: Idea;
 
   @Prop({ required: true, type: String, unique: true })
   comment: string;

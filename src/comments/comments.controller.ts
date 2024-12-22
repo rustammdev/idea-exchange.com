@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post, Req } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Req } from '@nestjs/common';
 import { CommentsService } from './comments.service';
 import { CreateCommentsDto } from './dto';
 import { VoteService } from './vote.service';
@@ -9,6 +9,12 @@ export class CommentsController {
     private commentsService: CommentsService,
     private voteService: VoteService,
   ) {}
+
+  @Get(':id')
+  async getComments(@Param('id') id: string) {
+    console.log(id);
+    return this.commentsService.get(id);
+  }
 
   @Post(':id')
   addComments(@Param('id') id: string, @Body() bodyData: CreateCommentsDto) {
